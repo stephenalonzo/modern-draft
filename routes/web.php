@@ -1,0 +1,37 @@
+<?php
+
+use App\Http\Controllers\CoachController;
+use App\Http\Controllers\DraftController;
+use App\Http\Controllers\PlayerController;
+use App\Http\Controllers\SplashController;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
+
+Route::inertia('/', 'welcome')->name('home');
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('/select-group', [SplashController::class, 'index'])->name('select-group');
+
+    // Players HTTP Methods
+    Route::get('/players', [PlayerController::class, 'index'])->name('playersIndex');
+    Route::get('/players/{player}/edit', [PlayerController::class, 'edit'])->name('playersEdit');
+    Route::put('/players/{player}/update', [PlayerController::class, 'update'])->name('playersUpdate');
+    Route::delete('/players/{player}/delete', [PlayerController::class, 'destroy'])->name('playersDelete');
+    Route::get('/players/create', [PlayerController::class, 'create'])->name('playersCreate');
+    Route::post('/players/store', [PlayerController::class, 'store'])->name('playersStore');
+
+    // Coaches HTTP Methods
+    Route::get('/coaches', [CoachController::class, 'index'])->name('coachesIndex');
+    Route::get('/coaches/{coach}/edit', [CoachController::class, 'edit'])->name('coachesEdit');
+    Route::put('/coaches/{coach}/update', [CoachController::class, 'update'])->name('coachesUpdate');
+    Route::get('/coaches/create', [CoachController::class, 'create'])->name('coachesCreate');
+    Route::post('/coaches/store', [CoachController::class, 'store'])->name('coachesStore');
+
+    // Drafts HTTP Methods
+    Route::get('/draft', [DraftController::class, 'index'])->name('draftsIndex');
+    Route::get('/draft/create', [DraftController::class, 'create'])->name('draftsCreate');
+    Route::post('/draft/store', [DraftController::class, 'store'])->name('draftsStore');
+});
+
+require __DIR__ . '/settings.php';
