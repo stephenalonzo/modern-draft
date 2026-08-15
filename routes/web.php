@@ -31,8 +31,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Drafts HTTP Methods
     Route::get('/draft', [DraftController::class, 'index'])->name('draftsIndex');
     Route::get('/draft/create', [DraftController::class, 'create'])->name('draftsCreate');
+    Route::get('/draft/create/order', [DraftController::class, 'draftOrder'])->name('draftOrder');
     Route::post('/draft/store', [DraftController::class, 'store'])->name('draftsStore');
+    Route::post('/draft/store/order', [DraftController::class, 'draftOrderStore'])->name('draftOrderStore');
     Route::get('/draft/{draft:draft_id}', [DraftController::class, 'show'])->name('draftsShow');
+    Route::put('/draft/{draft:draft_id}/start', [DraftController::class, 'startDraft'])->name('draftStart');
 });
 
 require __DIR__ . '/settings.php';

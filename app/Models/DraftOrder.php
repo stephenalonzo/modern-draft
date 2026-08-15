@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DraftOrder extends Model
 {
-    protected $fillable = ['draft_id', 'coach_first_name', 'coach_last_name'];
+    protected $fillable = ['draft_id', 'coach'];
 
     public function draft()
     {

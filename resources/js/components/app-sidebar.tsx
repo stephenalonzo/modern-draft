@@ -32,16 +32,16 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { coachesCreate, coachesIndex, dashboard, draftsIndex, playersCreate, playersIndex } from '@/routes';
+import { coachesCreate, coachesIndex, dashboard, draftOrder, draftsIndex, playersCreate, playersIndex } from '@/routes';
 import type { NavItem } from '@/types';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Draft',
-        href: draftsIndex(),
-        icon: LayoutGrid,
-    },
-];
+// const mainNavItems: NavItem[] = [
+//     {
+//         title: 'Draft',
+//         href: draftsIndex(),
+//         icon: LayoutGrid,
+//     },
+// ];
 
 const playersNavItems: NavItem[] = [
     {
@@ -70,6 +70,17 @@ const coachesNavItems: NavItem[] = [
     {
         title: 'Add Coaches',
         href: coachesCreate(),
+    },
+];
+
+const draftsNavItems: NavItem[] = [
+    {
+        title: 'View & Manage',
+        href: draftsIndex(),
+    },
+    {
+        title: 'Draft Order',
+        href: draftOrder(),
     },
 ];
 
@@ -146,18 +157,29 @@ export function AppSidebar() {
                                 </CollapsibleContent>
                             </Collapsible>
                         </SidebarMenuItem>
-                        <SidebarMenu>
-                            {mainNavItems.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
-                                        <Link href={item.href} prefetch>
-                                            <LayoutList />
-                                            <span>{item.title}</span>
-                                        </Link>
+                        <SidebarMenuItem>
+                            <Collapsible className="group/collapsible">
+                                <CollapsibleTrigger asChild>
+                                    <SidebarMenuButton>
+                                        <LayoutList className="size-5" />
+                                        <span>Draft</span>
+                                        <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                                     </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
-                        </SidebarMenu>
+                                </CollapsibleTrigger>
+
+                                <CollapsibleContent>
+                                    <SidebarMenuSub>
+                                        {draftsNavItems.map((item) => (
+                                            <SidebarMenuSubItem key={item.title}>
+                                                <SidebarMenuSubButton asChild>
+                                                    <Link href={item.href}>{item.title}</Link>
+                                                </SidebarMenuSubButton>
+                                            </SidebarMenuSubItem>
+                                        ))}
+                                    </SidebarMenuSub>
+                                </CollapsibleContent>
+                            </Collapsible>
+                        </SidebarMenuItem>
                     </SidebarMenu>
                 </SidebarGroup>
             </SidebarContent>

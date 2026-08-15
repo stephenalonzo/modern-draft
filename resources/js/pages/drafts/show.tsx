@@ -1,4 +1,4 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage, useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { route } from 'ziggy-js';
 
@@ -9,28 +9,50 @@ interface Players {
     comments: string
 }
 
+interface Draft {
+    id: number,
+    draft_id: number,
+    draft_status: string
+}
+
 interface PageProps {
     players: Players[]
+    draft: Draft
 }
 
 export default function Draft() {
-    const { players } = (usePage().props as unknown) as PageProps;
+    const { players, draft } = (usePage().props as unknown) as PageProps;
+
+    const { put } = useForm({});
+
+    function startDraft(e: any) {
+        e.preventDefault();
+        put(route('draftStart', draft.draft_id));
+    }
 
     return (
         <>
             <Head title="Drafts" />
             <div className="flex h-full flex-1 flex-col gap-2 overflow-x-auto rounded-xl p-4">
-                <div className="grid grid-cols-2 gap-6">
-                    <div className="p-4 rounded-md bg-orange-400 text-white w-full flex items-center justify-between">
-                        <h3 className="text-4xl font-semibold tracking-tight">On the board:</h3>
-                        <h2 className='text-xl'>Mike Brown</h2>
-                    </div>
-                    <div className="p-4 rounded-md bg-blue-400 text-white w-full flex items-center justify-between">
-                        <h3 className="text-4xl font-semibold tracking-tight">Last pick:</h3>
-                        <h2 className='text-xl'>Luka Doncic <span className="text-sm">(1st Pick made by JJ Reddick)</span></h2>
-                    </div>
+                <div>
+                    {draft.draft_status == 'active' ? (
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="p-4 rounded-md bg-orange-400 text-white w-full flex items-center justify-between">
+                                <h3 className="text-4xl font-semibold tracking-tight">On the board:</h3>
+                                <h2 className='text-xl'>Mike Brown</h2>
+                            </div>
+                            <div className="p-4 rounded-md bg-blue-400 text-white w-full flex items-center justify-between">
+                                <h3 className="text-4xl font-semibold tracking-tight">Last pick:</h3>
+                                <h2 className='text-xl'>Luka Doncic <span className="text-sm">(1st Pick made by JJ Reddick)</span></h2>
+                            </div>
+                        </div>
+                    ) : (
+                        <form onSubmit={startDraft}>
+                            <Button className='bg-green-600'>Start Draft</Button>
+                        </form>
+                    )}
                 </div>
-                <div className="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
+                <div className="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-md border border-default">
                     <table className="w-full text-sm text-left rtl:text-right text-body">
                         <thead className="text-sm text-body bg-neutral-secondary-soft border-b rounded-base border-default">
                             <tr>

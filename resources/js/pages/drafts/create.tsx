@@ -1,7 +1,18 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 
+interface Coaches {
+    id: string,
+    first_name: string,
+    last_name: string
+}
+
+interface PageProps {
+    coaches: Coaches[]
+}
 export default function Draft() {
+    const { coaches } = (usePage().props as unknown) as PageProps;
+
     const { setData, data, post, processing } = useForm({
         draft_start: '',
         draft_order: false,
@@ -23,7 +34,7 @@ export default function Draft() {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="w-full flex flex-col space-y-2">
                                 <label htmlFor="time" className='text-sm'>Draft Start</label>
-                                <input type="time" id="time" className="block w-full px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand px-3 py-2.5 shadow-xs placeholder:text-body" min="00:00" max="24:00" value={data.draft_start} required  onChange={(e) => setData("draft_start", e.target.value)} />
+                                <input type="time" id="time" className="block w-full px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand px-3 py-2.5 shadow-xs placeholder:text-body" min="00:00" max="24:00" value={data.draft_start} required onChange={(e) => setData("draft_start", e.target.value)} />
                             </div>
                             <div className="w-full flex flex-col space-y-2 col-span-2">
                                 <label className="inline-flex items-center cursor-pointer">

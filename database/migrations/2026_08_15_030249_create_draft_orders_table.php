@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('draft_orders', function (Blueprint $table) {
             $table->id();
             $table->string('draft_id');
-            $table->string('coach_first_name');
-            $table->string('coach_last_name');
+            $table->string('coach');
             $table->timestamps();
         });
     }
