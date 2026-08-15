@@ -32,6 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/draft', [DraftController::class, 'index'])->name('draftsIndex');
     Route::get('/draft/create', [DraftController::class, 'create'])->name('draftsCreate');
     Route::post('/draft/store', [DraftController::class, 'store'])->name('draftsStore');
+    Route::get('/draft/{draft:draft_id}', [DraftController::class, 'show'])->name('draftsShow');
 });
 
 require __DIR__ . '/settings.php';

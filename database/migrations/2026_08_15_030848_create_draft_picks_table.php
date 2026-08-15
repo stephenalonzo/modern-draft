@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('drafts', function (Blueprint $table) {
+        Schema::create('draft_picks', function (Blueprint $table) {
             $table->id();
             $table->string('draft_id');
-            $table->time('draft_start');
-            $table->string('draft_status')->default('pending');
-            $table->string('draft_order')->nullable();
-            $table->string('auto_pick')->nullable();
+            $table->string('player_first_name');
+            $table->string('player_last_name');
+            $table->string('coach');
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('drafts');
+        Schema::dropIfExists('draft_picks');
     }
 };
