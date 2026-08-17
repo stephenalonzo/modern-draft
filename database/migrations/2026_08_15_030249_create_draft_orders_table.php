@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('draft_id');
             $table->string('coach');
+            $table->string('on_the_board')->nullable();
             $table->timestamps();
         });
     }

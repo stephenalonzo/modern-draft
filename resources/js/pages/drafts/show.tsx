@@ -1,12 +1,23 @@
-import { Head, Link, usePage, useForm } from '@inertiajs/react';
+import { Head, Link, usePage, useForm, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { route } from 'ziggy-js';
+
+interface Coaches {
+    id: number,
+    first_name: string,
+    last_name: string,
+    pivot?: {
+        coach_id: number,
+        player_id: number
+    }
+}
 
 interface Players {
     id: number,
     first_name: string,
     last_name: string,
-    comments: string
+    comments: string,
+    coaches: Coaches[]
 }
 
 interface Draft {
@@ -15,20 +26,51 @@ interface Draft {
     draft_status: string
 }
 
+interface DraftPick {
+    id: number,
+    player_first_name: string,
+    player_last_name: string,
+    coach: string
+}
+
 interface PageProps {
     players: Players[]
-    draft: Draft
+    draft: Draft,
+    coach: string,
+    recentPickCoach: string,
+    draftPick: DraftPick[],
+    coaches: Coaches[]
 }
 
 export default function Draft() {
-    const { players, draft } = (usePage().props as unknown) as PageProps;
+    const { players, draft, coach, recentPickCoach, draftPick, coaches } = (usePage().props as unknown) as PageProps;
 
     const { put } = useForm({});
+
+    const { processing, data, setData } = useForm({
+        draft_id: draft.draft_id,
+        players: players.map((player) => ({
+            id: player.id,
+            player_first_name: player.first_name,
+            player_last_name: player.last_name,
+            coaches: player.coaches || []
+        })),
+    })
 
     function startDraft(e: any) {
         e.preventDefault();
         put(route('draftStart', draft.draft_id));
     }
+
+    const handleSelectPlayer = (index: any) => {
+        const selectedPlayer = data.players[index];
+
+        router.post(route('draftPick', draft.draft_id), {
+            draft_id: data.draft_id,
+            player_first_name: selectedPlayer.player_first_name,
+            player_last_name: selectedPlayer.player_last_name,
+        });
+    };
 
     return (
         <>
@@ -39,12 +81,16 @@ export default function Draft() {
                         <div className="grid grid-cols-2 gap-6">
                             <div className="p-4 rounded-md bg-orange-400 text-white w-full flex items-center justify-between">
                                 <h3 className="text-4xl font-semibold tracking-tight">On the board:</h3>
-                                <h2 className='text-xl'>Mike Brown</h2>
+                                <h2 className='text-xl'>{coach}</h2>
                             </div>
-                            <div className="p-4 rounded-md bg-blue-400 text-white w-full flex items-center justify-between">
-                                <h3 className="text-4xl font-semibold tracking-tight">Last pick:</h3>
-                                <h2 className='text-xl'>Luka Doncic <span className="text-sm">(1st Pick made by JJ Reddick)</span></h2>
-                            </div>
+                            {draftPick.length > 0 && (
+                                (draftPick.map((pick) => (
+                                    <div key={pick.id} className="p-4 rounded-md bg-blue-400 text-white w-full flex items-center justify-between">
+                                        <h3 className="text-4xl font-semibold tracking-tight">Last pick:</h3>
+                                        <h2 className='text-xl'>{pick.player_first_name + ' ' + pick.player_last_name} <span className="text-sm">(Pick made by {pick.coach})</span></h2>
+                                    </div>
+                                )))
+                            )}
                         </div>
                     ) : (
                         <form onSubmit={startDraft}>
@@ -52,7 +98,7 @@ export default function Draft() {
                         </form>
                     )}
                 </div>
-                <div className="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-md border border-default">
+                <form className="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-md border border-default">
                     <table className="w-full text-sm text-left rtl:text-right text-body">
                         <thead className="text-sm text-body bg-neutral-secondary-soft border-b rounded-base border-default">
                             <tr>
@@ -63,34 +109,37 @@ export default function Draft() {
                                     Last Name
                                 </th>
                                 <th scope="col" className="px-6 py-3 font-medium">
-                                    Comments
-                                </th>
-                                <th scope="col" className="px-6 py-3 font-medium">
                                     Action
                                 </th>
                             </tr>
                         </thead>
                         {players.length > 0 && (
                             <tbody>
-                                {players.map((player) => (
+                                {data.players.map((player, index) => (
                                     <tr className="bg-neutral-primary border-b border-default" key={player.id}>
                                         <th scope="row" className="px-6 py-4 font-medium text-heading whitespace-nowrap">
-                                            {player.first_name}
+                                            <input type="text" value={player.player_first_name} onChange={(e) => setData(`players.${index}.player_first_name`, e.target.value)} />
                                         </th>
                                         <td className="px-6 py-4">
-                                            {player.last_name}
+                                            <input type="text" value={player.player_last_name} onChange={(e) => setData(`players.${index}.player_last_name`, e.target.value)} />
                                         </td>
-                                        <td className="px-6 py-4">
-                                            {player.comments}
-                                        </td>
-                                        <td className="px-6 py-4 space-x-2">
-                                        </td>
+                                        {player.coaches && player.coaches.length > 0 ? (
+                                            <div>
+                                                {player.coaches.map((coach) => (
+                                                    <span>Selected by {coach.first_name + ' ' + coach.last_name}</span>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <td className="px-6 py-4 space-x-2">
+                                                <button type='button' onClick={() => handleSelectPlayer(index)} disabled={processing} className='px-4 py-2 rounded-md bg-green-600 text-white'>Select</button>
+                                            </td>
+                                        )}
                                     </tr>
                                 ))}
                             </tbody>
                         )}
                     </table>
-                </div>
+                </form>
             </div>
         </>
     );

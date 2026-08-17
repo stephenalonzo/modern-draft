@@ -34,6 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/draft/create/order', [DraftController::class, 'draftOrder'])->name('draftOrder');
     Route::post('/draft/store', [DraftController::class, 'store'])->name('draftsStore');
     Route::post('/draft/store/order', [DraftController::class, 'draftOrderStore'])->name('draftOrderStore');
+    Route::post('/draft/{draft:draft_id}/pick', [DraftController::class, 'draftPick'])->name('draftPick');
     Route::get('/draft/{draft:draft_id}', [DraftController::class, 'show'])->name('draftsShow');
     Route::put('/draft/{draft:draft_id}/start', [DraftController::class, 'startDraft'])->name('draftStart');
 });

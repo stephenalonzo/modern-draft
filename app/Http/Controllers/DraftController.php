@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DraftOrderRequest;
+use App\Http\Requests\DraftPickRequest;
 use App\Http\Requests\DraftRequest;
 use App\Models\Coach;
 use App\Models\Draft;
 use App\Models\DraftOrder;
+use App\Models\DraftPick;
 use App\Models\Player;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -22,9 +24,19 @@ class DraftController extends Controller
 
     public function show(Draft $draft)
     {
+        $getCoach = DraftOrder::select('coach')->where('draft_id', $draft->draft_id)->where('on_the_board', 'active')->first();
+
+        $getRecentPickCoach = DraftOrder::select('coach')->where('draft_id', $draft->draft_id)->where('on_the_board', 'completed')->orderByDesc('updated_at')->first();
+
+        $draftPick = DraftPick::select('player_first_name', 'player_last_name', 'coach')->where('draft_id', $draft->draft_id)->latest()->limit(1)->get();
+
         return Inertia::render('drafts/show', [
             'draft' => $draft,
-            'players' => Player::all()
+            'players' => Player::with('coaches')->get(),
+            'coaches' => Coach::all(),
+            'coach' => $getCoach->coach ?? '',
+            'recentPickCoach' => $getRecentPickCoach->coach ?? '',
+            'draftPick' => $draftPick ?? []
         ]);
     }
 
@@ -61,7 +73,8 @@ class DraftController extends Controller
         foreach ($validated['coaches'] as $coach) {
             DraftOrder::create([
                 'draft_id' => $validated['draft_id'],
-                'coach' => $coach['coach']
+                'coach' => $coach['coach'],
+                'on_the_board' => 'pending'
             ]);
         }
 
@@ -71,5 +84,45 @@ class DraftController extends Controller
     public function startDraft(Draft $draft)
     {
         $draft->update(['draft_status' => 'active']);
+
+        $draftOrder = DraftOrder::where('draft_id', $draft->draft_id)->where('on_the_board', 'pending')->first();
+
+        $draftOrder->update(['on_the_board' => 'active']);
+    }
+
+    public function draftPick(DraftPickRequest $request, Draft $draft)
+    {
+        $validated = $request->validated();
+
+        $validated['draft_id'] = $draft->draft_id;
+        $getCoach = DraftOrder::select('coach')->where('draft_id', $draft->draft_id)->where('on_the_board', 'active')->first();
+        $validated['coach'] = $getCoach->coach;
+
+        $updateDraftOrder = DraftOrder::where('draft_id', $draft->draft_id)->where('on_the_board', 'active')->first();
+        $completedUpdate = $updateDraftOrder->update(['on_the_board' => 'completed']);
+
+        $getCoachName = explode(' ', $getCoach->coach);
+        $getPlayer = Player::select('id', 'first_name', 'last_name')->where('first_name', $validated['player_first_name'])->where('last_name', $validated['player_last_name'])->first();
+
+        if ($completedUpdate) {
+            $draftPick = DraftPick::create($validated);
+
+            $coach = Coach::where('first_name', $getCoachName[0])->where('last_name', $getCoachName[1])->first();
+
+            $coach->players()->attach($getPlayer->id);
+
+            if ($draftPick) {
+                $nextActivePick = DraftOrder::where('draft_id', $draft->draft_id)->where('on_the_board', 'pending')->first();
+
+                if (!is_null($nextActivePick)) {
+                    $nextActivePick->update(['on_the_board' => 'active']);
+                }
+
+                $updateDraftStatus = Draft::where('draft_id', $draft->draft_id)->first();
+                $updateDraftStatus->update(['draft_status' => 'completed']);
+            }
+        }
+
+        return redirect()->to(route('draftsShow', $draft));
     }
 }
