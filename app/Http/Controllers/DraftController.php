@@ -90,6 +90,11 @@ class DraftController extends Controller
         $draftOrder->update(['on_the_board' => 'active']);
     }
 
+    public function endDraft(Draft $draft)
+    {
+        $draft->update(['draft_status' => 'completed']);
+    }
+
     public function draftPick(DraftPickRequest $request, Draft $draft)
     {
         $validated = $request->validated();
@@ -118,11 +123,8 @@ class DraftController extends Controller
                     $nextActivePick->update(['on_the_board' => 'active']);
                 }
 
-                $updateDraftStatus = Draft::where('draft_id', $draft->draft_id)->first();
-                $updateDraftStatus->update(['draft_status' => 'completed']);
+                return back();
             }
         }
-
-        return redirect()->to(route('draftsShow', $draft));
     }
 }
