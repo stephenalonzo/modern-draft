@@ -1,9 +1,21 @@
-import { Head } from '@inertiajs/react';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+import { Head, usePage } from '@inertiajs/react';
 import { dashboard } from '@/routes';
-import { Clock, Settings } from 'lucide-react';
+import { Settings } from 'lucide-react';
+import { route } from 'ziggy-js';
 
+interface Drafts {
+    id: number,
+    draft_id: number,
+    draft_status: string
+}
+interface PageProps {
+    players: number,
+    coaches: number,
+    drafts: Drafts[]
+}
 export default function Dashboard() {
+    const { players, coaches, drafts } = (usePage().props as unknown) as PageProps;
+
     return (
         <>
             <Head title="Dashboard" />
@@ -12,20 +24,20 @@ export default function Dashboard() {
                     <div className="relative aspect-video overflow-hidden flex flex-col items-center justify-center space-y-4 rounded-xl border border-sidebar-border/70 bg-green-600 text-white dark:border-sidebar-border">
                         <div className="text-center space-y-2">
                             <h3 className="text-3xl font-semibold tracking-tight">Players</h3>
-                            <p>You have added 12 players.</p>
+                            <p>You have added {players} players.</p>
                         </div>
-                        <a href="" className='px-4 py-2 bg-white text-gray-950 rounded-md flex items-center space-x-1.5'>
-                            <Settings className='text-sm'/>
+                        <a href={route('playersIndex')} className='px-4 py-2 bg-white text-gray-950 rounded-md flex items-center space-x-1.5'>
+                            <Settings className='text-sm' />
                             <span>Manage Players</span>
                         </a>
                     </div>
                     <div className="relative aspect-video overflow-hidden flex flex-col items-center justify-center space-y-4 rounded-xl border border-sidebar-border/70 bg-blue-600 text-white dark:border-sidebar-border">
                         <div className="text-center space-y-2">
                             <h3 className="text-3xl font-semibold tracking-tight">Coaches</h3>
-                            <p>You have added 4 players.</p>
+                            <p>You have added {coaches} coaches.</p>
                         </div>
-                        <a href="" className='px-4 py-2 bg-white text-gray-950 rounded-md flex items-center space-x-1.5'>
-                            <Settings className='text-sm'/>
+                        <a href={route('coachesIndex')} className='px-4 py-2 bg-white text-gray-950 rounded-md flex items-center space-x-1.5'>
+                            <Settings className='text-sm' />
                             <span>Manage Coaches</span>
                         </a>
                     </div>
@@ -34,9 +46,9 @@ export default function Dashboard() {
                             <h3 className="text-3xl font-semibold tracking-tight">Draft</h3>
                             <p>No pending draft.</p>
                         </div>
-                        <a href="" className='px-4 py-2 bg-white text-gray-950 rounded-md flex items-center space-x-1.5'>
-                            <Clock className='text-sm'/>
-                            <span>Past Drafts</span>
+                        <a href={route('draftsIndex')} className='px-4 py-2 bg-white text-gray-950 rounded-md flex items-center space-x-1.5'>
+                            <Settings className='text-sm' />
+                            <span>Manage Drafts</span>
                         </a>
                     </div>
                 </div>
@@ -46,16 +58,16 @@ export default function Dashboard() {
                     </div>
                     <div className="px-4 py-2 space-y-3">
                         <h4>Past drafts and some of their data are available for your references and convenience.</h4>
-                        <ul className='w-full'>
-                            <a href="">
+                        {drafts.map((draft) => (
+                            <ul className='w-full'>
                                 <li className='w-full'>
-                                    <div className='px-4 py-2 rounded-md border border-gray-200 space-x-1.5 w-full'>
-                                        <span className='font-semibold'>Draft 42356 (COMPLETE)</span>
-                                        <span className='text-xs text-gray-500'>Last pick made: Jul 21, 2026 6:46:27 AM</span>
+                                    <div className='px-4 py-3 rounded-md border border-gray-200 space-x-1.5 w-full flex items-center justify-between'>
+                                        <span className='font-semibold'>Draft {draft.draft_id} <span className="uppercase text-green-500">{draft.draft_status}</span></span>
+                                        <a href={route('draftsShow', draft.draft_id)} className='bg-black text-white px-4 py-2 rounded-md text-sm'>View Results</a>
                                     </div>
                                 </li>
-                            </a>
-                        </ul>
+                            </ul>
+                        ))}
                     </div>
                 </div>
             </div>

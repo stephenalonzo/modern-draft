@@ -17,8 +17,10 @@ class DraftController extends Controller
 {
     public function index()
     {
+        // dd(Draft::where('draft_status', 'pending')->orWhere('')->get());
         return Inertia::render('drafts/index', [
-            'drafts' => Draft::all()
+            'drafts' => Draft::where('draft_status', 'pending')->orWhere('draft_status', 'active')->get(),
+            'completedDrafts' => Draft::where('draft_status', 'completed')->get()
         ]);
     }
 

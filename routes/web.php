@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CoachController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DraftController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\SplashController;
@@ -10,7 +11,7 @@ use Inertia\Inertia;
 Route::inertia('/', 'welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/select-group', [SplashController::class, 'index'])->name('select-group');
 
     // Players HTTP Methods
