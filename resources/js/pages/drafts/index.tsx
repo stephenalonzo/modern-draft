@@ -25,7 +25,7 @@ export default function Draft() {
         <>
             <Head title="Drafts" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                {drafts.length > 0 && (
+                {drafts.length > 0 ? (
                     <div>
                         {drafts.map((draft) => (
                             <div key={draft.id}>
@@ -47,6 +47,13 @@ export default function Draft() {
                                 }
                             </div>
                         ))}
+                    </div>
+                ) : (
+                    <div className="p-4 border rounded-md flex flex-col space-y-2">
+                        <p>No current drafts. Ready to start one?</p>
+                        <Link href={route('draftsCreate')}>
+                            <Button className='bg-green-600'>Create new draft</Button>
+                        </Link>
                     </div>
                 )}
                 <div className="relative min-h-screen flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">

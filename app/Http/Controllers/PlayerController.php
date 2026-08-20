@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PlayerRequest;
+use App\Models\Coach;
 use App\Models\Player;
 use Inertia\Inertia;
 
@@ -27,14 +28,10 @@ class PlayerController extends Controller
         Player::create($validated);
 
         return redirect()->to('/dashboard');
-
-        // DEBUG
-        // dd($validated);
     }
 
     public function edit(Player $player)
     {
-        // Return edit view
         return Inertia::render('players/edit', [
             'player' => $player
         ]);
@@ -50,5 +47,12 @@ class PlayerController extends Controller
     public function destroy(Player $player)
     {
         dd($player);
+    }
+
+    public function teamView()
+    {
+        return Inertia::render('players/team', [
+            'coaches' => Coach::with('players')->get()
+        ]);
     }
 }

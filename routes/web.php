@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DraftController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\SplashController;
+use App\Http\Controllers\TradeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -21,6 +22,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/players/{player}/delete', [PlayerController::class, 'destroy'])->name('playersDelete');
     Route::get('/players/create', [PlayerController::class, 'create'])->name('playersCreate');
     Route::post('/players/store', [PlayerController::class, 'store'])->name('playersStore');
+    // Team View
+    Route::get('/teams', [PlayerController::class, 'teamView'])->name('teamsIndex');
+    // Trade
+    Route::get('/trade', [TradeController::class, 'index'])->name('tradesIndex');
+    Route::put('/trade/confirmed', [TradeController::class, 'update'])->name('tradesConfirm');
 
     // Coaches HTTP Methods
     Route::get('/coaches', [CoachController::class, 'index'])->name('coachesIndex');

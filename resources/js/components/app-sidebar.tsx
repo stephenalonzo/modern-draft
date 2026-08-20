@@ -32,7 +32,7 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { coachesCreate, coachesIndex, dashboard, draftOrder, draftsIndex, playersCreate, playersIndex } from '@/routes';
+import { coachesCreate, coachesIndex, dashboard, draftOrder, draftsIndex, playersCreate, playersIndex, teamsIndex, tradesIndex } from '@/routes';
 import type { NavItem } from '@/types';
 
 // const mainNavItems: NavItem[] = [
@@ -50,11 +50,11 @@ const playersNavItems: NavItem[] = [
     },
     {
         title: 'Team View',
-        href: dashboard()
+        href: teamsIndex()
     },
     {
         title: 'Trade',
-        href: dashboard()
+        href: tradesIndex()
     },
     {
         title: 'Add Players',
