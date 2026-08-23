@@ -11,10 +11,11 @@ interface Drafts {
 interface PageProps {
     players: number,
     coaches: number,
-    drafts: Drafts[]
+    drafts: Drafts[],
+    groupUuid: string;
 }
 export default function Dashboard() {
-    const { players, coaches, drafts } = (usePage().props as unknown) as PageProps;
+    const { players, coaches, drafts, groupUuid } = (usePage().props as unknown) as PageProps;
 
     return (
         <>
@@ -79,7 +80,7 @@ Dashboard.layout = {
     breadcrumbs: [
         {
             title: 'Dashboard',
-            href: dashboard(),
+            // href: dashboard(),
         },
     ],
 };

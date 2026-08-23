@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import {
     BookOpen,
     FolderGit2,
@@ -92,14 +92,19 @@ const footerNavItems: NavItem[] = [
     },
 ];
 
+interface PageProps {
+    groupUuid: string;
+}
+
 export function AppSidebar() {
+    const { groupUuid } = (usePage().props as unknown) as PageProps;
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href={dashboard(groupUuid)} prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>

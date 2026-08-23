@@ -3,6 +3,7 @@
 use App\Http\Controllers\CoachController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DraftController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\SplashController;
 use App\Http\Controllers\TradeController;
@@ -12,8 +13,12 @@ use Inertia\Inertia;
 Route::inertia('/', 'welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/{group:group_uuid}', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Group HTTP Methods
     Route::get('/select-group', [SplashController::class, 'index'])->name('select-group');
+    Route::get('/group/create', [GroupController::class, 'create'])->name('groupsCreate');
+    Route::post('/group/store', [GroupController::class, 'store'])->name('groupsStore');
 
     // Players HTTP Methods
     Route::get('/players', [PlayerController::class, 'index'])->name('playersIndex');
