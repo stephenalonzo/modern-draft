@@ -2,6 +2,7 @@ import { Head, usePage } from '@inertiajs/react';
 import { dashboard } from '@/routes';
 import { Settings } from 'lucide-react';
 import { route } from 'ziggy-js';
+import { GroupProps } from '@/types';
 
 interface Drafts {
     id: number,
@@ -12,10 +13,10 @@ interface PageProps {
     players: number,
     coaches: number,
     drafts: Drafts[],
-    groupUuid: string;
 }
-export default function Dashboard() {
-    const { players, coaches, drafts, groupUuid } = (usePage().props as unknown) as PageProps;
+
+export default function Dashboard({groupUuid}: GroupProps) {
+    const { players, coaches, drafts } = (usePage().props as unknown) as PageProps;
 
     return (
         <>
@@ -27,7 +28,7 @@ export default function Dashboard() {
                             <h3 className="text-3xl font-semibold tracking-tight">Players</h3>
                             <p>You have added {players} players.</p>
                         </div>
-                        <a href={route('playersIndex')} className='px-4 py-2 bg-white text-gray-950 rounded-md flex items-center space-x-1.5'>
+                        <a href={route('playersIndex', groupUuid)} className='px-4 py-2 bg-white text-gray-950 rounded-md flex items-center space-x-1.5'>
                             <Settings className='text-sm' />
                             <span>Manage Players</span>
                         </a>
@@ -37,7 +38,7 @@ export default function Dashboard() {
                             <h3 className="text-3xl font-semibold tracking-tight">Coaches</h3>
                             <p>You have added {coaches} coaches.</p>
                         </div>
-                        <a href={route('coachesIndex')} className='px-4 py-2 bg-white text-gray-950 rounded-md flex items-center space-x-1.5'>
+                        <a href={route('coachesIndex', groupUuid)} className='px-4 py-2 bg-white text-gray-950 rounded-md flex items-center space-x-1.5'>
                             <Settings className='text-sm' />
                             <span>Manage Coaches</span>
                         </a>
@@ -47,7 +48,7 @@ export default function Dashboard() {
                             <h3 className="text-3xl font-semibold tracking-tight">Draft</h3>
                             <p>No pending draft.</p>
                         </div>
-                        <a href={route('draftsIndex')} className='px-4 py-2 bg-white text-gray-950 rounded-md flex items-center space-x-1.5'>
+                        <a href={route('draftsIndex', groupUuid)} className='px-4 py-2 bg-white text-gray-950 rounded-md flex items-center space-x-1.5'>
                             <Settings className='text-sm' />
                             <span>Manage Drafts</span>
                         </a>
@@ -60,7 +61,7 @@ export default function Dashboard() {
                     <div className="px-4 py-2 space-y-3">
                         <h4>Past drafts and some of their data are available for your references and convenience.</h4>
                         {drafts.map((draft) => (
-                            <ul className='w-full'>
+                            <ul key={draft.id} className='w-full'>
                                 <li className='w-full'>
                                     <div className='px-4 py-3 rounded-md border border-gray-200 space-x-1.5 w-full flex items-center justify-between'>
                                         <span className='font-semibold'>Draft {draft.draft_id} <span className="uppercase text-green-500">{draft.draft_status}</span></span>
@@ -80,7 +81,6 @@ Dashboard.layout = {
     breadcrumbs: [
         {
             title: 'Dashboard',
-            // href: dashboard(),
         },
     ],
 };

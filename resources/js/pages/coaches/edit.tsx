@@ -2,6 +2,7 @@ import { Head, usePage } from '@inertiajs/react';
 import { dashboard } from '@/routes';
 import { useForm } from "@inertiajs/react";
 import { route } from 'ziggy-js';
+import { GroupProps } from '@/types';
 
 interface Coach {
     id: number,
@@ -13,7 +14,7 @@ interface PageProps {
     coach: Coach
 }
 
-export default function Dashboard() {
+export default function Dashboard({groupUuid}: GroupProps) {
     const { coach } = (usePage().props as unknown) as PageProps;
 
     const { data, setData, put, processing } = useForm({
@@ -23,7 +24,7 @@ export default function Dashboard() {
 
     function update(e: any) {
         e.preventDefault();
-        put(route('coachesUpdate', coach.id));
+        put(route('coachesUpdate', {coach: coach.id, group: groupUuid}));
     }
 
     return (
@@ -55,7 +56,6 @@ Dashboard.layout = {
     breadcrumbs: [
         {
             title: 'Edit coach',
-            href: '',
         },
     ],
 };

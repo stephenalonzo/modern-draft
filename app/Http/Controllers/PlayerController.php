@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PlayerRequest;
 use App\Models\Coach;
+use App\Models\Group;
 use App\Models\Player;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class PlayerController extends Controller
@@ -25,9 +28,15 @@ class PlayerController extends Controller
     {
         $validated = $request->validated();
 
+        $checkGroup = Group::where('group_uuid', $request->route('group'))->first();
+
+        if (is_null($checkGroup)) {
+            return redirect()->to(route('select-group'));
+        }
+
         Player::create($validated);
 
-        return redirect()->to('/dashboard');
+        return redirect()->to(route('dashboard', $request->route('group')));
     }
 
     public function edit(Player $player)

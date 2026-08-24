@@ -2,8 +2,11 @@ import { Head, useForm, usePage, router } from '@inertiajs/react';
 import { playersIndex, teamsIndex, tradesIndex } from '@/routes';
 import { TradeProps } from '@/types/trade';
 import { route } from 'ziggy-js';
+import { GroupProps } from '@/types';
 
 export default function trade({ players }: TradeProps) {
+    const {groupUuid} = (usePage().props as unknown) as GroupProps;
+
     const { put, processing, setData, data } = useForm({
         player_one_id: '',
         player_two_id: ''
@@ -11,7 +14,7 @@ export default function trade({ players }: TradeProps) {
 
     function confirmTrade(e: any) {
         e.preventDefault();
-        put(route('tradesConfirm'));
+        put(route('tradesConfirm', groupUuid));
     }
 
     return (
@@ -55,7 +58,6 @@ trade.layout = {
     breadcrumbs: [
         {
             title: 'Trade',
-            href: tradesIndex(),
         },
     ],
 };

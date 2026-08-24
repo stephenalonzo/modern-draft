@@ -9,8 +9,8 @@ use App\Models\Coach;
 use App\Models\Draft;
 use App\Models\DraftOrder;
 use App\Models\DraftPick;
+use App\Models\Group;
 use App\Models\Player;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class DraftController extends Controller
@@ -63,9 +63,15 @@ class DraftController extends Controller
 
         $validated['draft_id'] = rand(1000, 9999);
 
+        $checkGroup = Group::where('group_uuid', $request->route('group'))->first();
+
+        if (is_null($checkGroup)) {
+            return redirect()->to(route('select-group'));
+        }
+
         Draft::create($validated);
 
-        return redirect()->to('/dashboard');
+        return redirect()->to(route('dashboard', $request->route('group')));
     }
 
     public function draftOrderStore(DraftOrderRequest $request)
@@ -73,6 +79,12 @@ class DraftController extends Controller
         $validated = $request->validated();
 
         foreach ($validated['coaches'] as $coach) {
+            $checkGroup = Group::where('group_uuid', $request->route('group'))->first();
+
+            if (is_null($checkGroup)) {
+                return redirect()->to(route('select-group'));
+            }
+
             DraftOrder::create([
                 'draft_id' => $validated['draft_id'],
                 'coach' => $coach['coach'],
@@ -80,7 +92,7 @@ class DraftController extends Controller
             ]);
         }
 
-        return redirect()->to('/dashboard');
+        return redirect()->to(route('dashboard', $request->route('group')));
     }
 
     public function startDraft(Draft $draft)
@@ -112,6 +124,12 @@ class DraftController extends Controller
         $getPlayer = Player::select('id', 'first_name', 'last_name')->where('first_name', $validated['player_first_name'])->where('last_name', $validated['player_last_name'])->first();
 
         if ($completedUpdate) {
+            $checkGroup = Group::where('group_uuid', $request->route('group'))->first();
+
+            if (is_null($checkGroup)) {
+                return redirect()->to(route('select-group'));
+            }
+
             $draftPick = DraftPick::create($validated);
 
             $coach = Coach::where('first_name', $getCoachName[0])->where('last_name', $getCoachName[1])->first();

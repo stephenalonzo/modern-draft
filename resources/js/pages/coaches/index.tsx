@@ -3,6 +3,7 @@ import { coachesIndex, dashboard, playersIndex } from '@/routes';
 import { Pencil, Trash2 } from 'lucide-react';
 import { route } from 'ziggy-js';
 import { Button } from '@/components/ui/button';
+import { GroupProps } from '@/types';
 
 interface Coaches {
     id: number,
@@ -14,7 +15,7 @@ interface PageProps {
     coaches: Coaches[]
 }
 
-export default function Dashboard() {
+export default function Dashboard({groupUuid}: GroupProps) {
     const { coaches } = (usePage().props as unknown) as PageProps;
 
     const {delete: destroy} = useForm();
@@ -55,7 +56,7 @@ export default function Dashboard() {
                                             {coach.last_name}
                                         </td>
                                         <td className="px-6 py-4 space-x-2">
-                                            <Link href={route('coachesEdit', coach.id)}>
+                                            <Link href={route('coachesEdit', {coach: coach.id, group: groupUuid})}>
                                                 <Button className='px-4 py-2 bg-green-600'><Pencil></Pencil></Button>
                                             </Link>
                                             <Button onClick={() => handleDelete(coach.id)} className='px-4 py-2 bg-red-700'>
@@ -77,7 +78,6 @@ Dashboard.layout = {
     breadcrumbs: [
         {
             title: 'View Coaches',
-            href: coachesIndex(),
         },
     ],
 };

@@ -33,54 +33,47 @@ import {
     CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { coachesCreate, coachesIndex, dashboard, draftOrder, draftsIndex, playersCreate, playersIndex, teamsIndex, tradesIndex } from '@/routes';
-import type { NavItem } from '@/types';
+import type { NavItem, GroupProps } from '@/types';
+import { route } from 'ziggy-js';
 
-// const mainNavItems: NavItem[] = [
-//     {
-//         title: 'Draft',
-//         href: draftsIndex(),
-//         icon: LayoutGrid,
-//     },
-// ];
-
-const playersNavItems: NavItem[] = [
+const getPlayersNavItems = (groupUuid: string) => [
     {
         title: 'View & Manage',
-        href: playersIndex()
+        href: route('playersIndex', {group: groupUuid})
     },
     {
         title: 'Team View',
-        href: teamsIndex()
+        href: route('teamsIndex', {group: groupUuid})
     },
     {
         title: 'Trade',
-        href: tradesIndex()
+        href: route('tradesIndex', {group: groupUuid})
     },
     {
         title: 'Add Players',
-        href: playersCreate()
+        href: route('playersCreate', {group: groupUuid})
     },
 ];
 
-const coachesNavItems: NavItem[] = [
+const getCoachesNavItems = (groupUuid: string) => [
     {
         title: 'View & Manage',
-        href: coachesIndex(),
+        href: route('coachesIndex', {group: groupUuid}),
     },
     {
         title: 'Add Coaches',
-        href: coachesCreate(),
+        href: route('coachesCreate', {group: groupUuid}),
     },
 ];
 
-const draftsNavItems: NavItem[] = [
+const getDraftsNavItems = (groupUuid: string) => [
     {
         title: 'View & Manage',
-        href: draftsIndex(),
+        href: route('draftsIndex', {group: groupUuid})
     },
     {
         title: 'Draft Order',
-        href: draftOrder(),
+        href: route('draftOrder', {group: groupUuid}),
     },
 ];
 
@@ -97,7 +90,12 @@ interface PageProps {
 }
 
 export function AppSidebar() {
-    const { groupUuid } = (usePage().props as unknown) as PageProps;
+    const groupUuid = route().params.group as string;
+
+    const playersNavItems = getPlayersNavItems(groupUuid);
+    const coachesNavItems = getCoachesNavItems(groupUuid);
+    const draftsNavItems = getDraftsNavItems(groupUuid);
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>

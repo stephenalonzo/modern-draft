@@ -1,5 +1,7 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
+import { route } from 'ziggy-js';
+import { GroupProps } from '@/types';
 
 interface Coaches {
     id: string,
@@ -10,7 +12,7 @@ interface Coaches {
 interface PageProps {
     coaches: Coaches[]
 }
-export default function Draft() {
+export default function Draft({groupUuid}: GroupProps) {
     const { coaches } = (usePage().props as unknown) as PageProps;
 
     const { setData, data, post, processing } = useForm({
@@ -21,7 +23,7 @@ export default function Draft() {
 
     function submit(e: any) {
         e.preventDefault();
-        post("/draft/store");
+        post(route('draftsStore', {group: groupUuid}));
     }
 
     return (

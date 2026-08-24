@@ -1,5 +1,5 @@
 import { Head, usePage, Link, useForm } from '@inertiajs/react';
-import { dashboard, playersIndex } from '@/routes';
+import { playersIndex } from '@/routes';
 import { Pencil, Trash2 } from 'lucide-react';
 import { route } from 'ziggy-js';
 import { Button } from '@/components/ui/button';
@@ -12,11 +12,12 @@ interface Players {
 }
 
 interface PageProps {
-    players: Players[]
+    players: Players[],
+    groupUuid: string;
 }
 
 export default function Dashboard() {
-    const { players } = (usePage().props as unknown) as PageProps;
+    const { players, groupUuid } = (usePage().props as unknown) as PageProps;
 
     const {delete: destroy} = useForm();
 
@@ -62,7 +63,7 @@ export default function Dashboard() {
                                             {player.comments}
                                         </td>
                                         <td className="px-6 py-4 space-x-2">
-                                            <Link href={route('playersEdit', player.id)}>
+                                            <Link href={route('playersEdit', {player: player.id, group: groupUuid})}>
                                                 <Button className='px-4 py-2 bg-green-600'><Pencil></Pencil></Button>
                                             </Link>
                                             <Button onClick={() => handleDelete(player.id)} className='px-4 py-2 bg-red-700'>
@@ -85,7 +86,7 @@ Dashboard.layout = {
     breadcrumbs: [
         {
             title: 'View Players',
-            href: playersIndex(),
+            // href: playersIndex(),
         },
     ],
 };

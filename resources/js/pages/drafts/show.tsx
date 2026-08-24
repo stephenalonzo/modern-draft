@@ -1,6 +1,7 @@
 import { Head, Link, usePage, useForm, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { route } from 'ziggy-js';
+import { GroupProps } from '@/types';
 
 interface Coaches {
     id: number,
@@ -42,7 +43,7 @@ interface PageProps {
     coaches: Coaches[]
 }
 
-export default function Draft() {
+export default function Draft({groupUuid}: GroupProps) {
     const { players, draft, coach, recentPickCoach, draftPick, coaches } = (usePage().props as unknown) as PageProps;
 
     const { put } = useForm({});
@@ -59,18 +60,18 @@ export default function Draft() {
 
     function startDraft(e: any) {
         e.preventDefault();
-        put(route('draftStart', draft.draft_id));
+        put(route('draftStart', {draft: draft.draft_id, group: groupUuid}));
     }
 
     function endDraft(e: any) {
         e.preventDefault();
-        put(route('draftEnd', draft.draft_id));
+        put(route('draftEnd', {draft: draft.draft_id, group: groupUuid}));
     }
 
     const handleSelectPlayer = (index: any) => {
         const selectedPlayer = data.players[index];
 
-        router.post(route('draftPick', draft.draft_id), {
+        router.post(route('draftPick', {draft: draft.draft_id, group: groupUuid}), {
             draft_id: data.draft_id,
             player_first_name: selectedPlayer.player_first_name,
             player_last_name: selectedPlayer.player_last_name,

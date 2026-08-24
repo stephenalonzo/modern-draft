@@ -28,6 +28,6 @@ class GroupController extends Controller
 
         $user->groups()->sync($group);
 
-        return redirect()->to(route('dashboard'));
+        return redirect()->to(route('dashboard', $request->route('group')));
     }
 }

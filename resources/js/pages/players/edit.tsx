@@ -11,11 +11,12 @@ interface Player {
 }
 
 interface PageProps {
-    player: Player
+    player: Player,
+    groupUuid: string;
 }
 
 export default function Dashboard() {
-    const { player } = (usePage().props as unknown) as PageProps;
+    const { player, groupUuid } = (usePage().props as unknown) as PageProps;
 
     const { data, setData, put, processing } = useForm({
         first_name: player.first_name,
@@ -25,7 +26,7 @@ export default function Dashboard() {
 
     function update(e: any) {
         e.preventDefault();
-        put(route('playersUpdate', player.id));
+        put(route('playersUpdate', {player: player.id, group: groupUuid}));
     }
 
     return (

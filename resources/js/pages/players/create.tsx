@@ -1,10 +1,10 @@
-import { Head } from '@inertiajs/react';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import { dashboard } from '@/routes';
-import { Clock, Settings } from 'lucide-react';
+import { Head, usePage } from '@inertiajs/react';
 import { useForm } from "@inertiajs/react";
-
+import { GroupProps } from '@/types';
+import { route } from 'ziggy-js';
 export default function Dashboard() {
+    const { groupUuid } = (usePage().props as unknown) as GroupProps;
+
     const { data, setData, post, processing } = useForm({
         first_name: '',
         last_name: '',
@@ -13,8 +13,9 @@ export default function Dashboard() {
 
     function submit(e: any) {
         e.preventDefault();
-        post("/players/store");
+        post(route('playersStore', groupUuid));
     }
+
     return (
         <>
             <Head title="Add a player" />
@@ -48,7 +49,6 @@ Dashboard.layout = {
     breadcrumbs: [
         {
             title: 'Add a player',
-            href: dashboard(),
         },
     ],
 };

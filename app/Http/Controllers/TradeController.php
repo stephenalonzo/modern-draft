@@ -32,6 +32,6 @@ class TradeController extends Controller
             $coach->players()->attach($playerOneTraded->id);
         }
 
-        return redirect()->to(route('teamsIndex'));
+        return redirect()->to(route('teamsIndex', $request->route('group')));
     }
 }
