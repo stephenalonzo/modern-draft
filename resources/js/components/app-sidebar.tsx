@@ -1,7 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
-    BookOpen,
-    FolderGit2,
     LayoutGrid,
     ListPlus,
     ChevronRight,
@@ -10,9 +8,7 @@ import {
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
-import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-import { Button } from './ui/button';
 import {
     Sidebar,
     SidebarContent,
@@ -32,9 +28,13 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { coachesCreate, coachesIndex, dashboard, draftOrder, draftsIndex, playersCreate, playersIndex, teamsIndex, tradesIndex } from '@/routes';
-import type { NavItem, GroupProps } from '@/types';
+import { dashboard } from '@/routes';
+import type { GroupProps, NavItem } from '@/types';
 import { route } from 'ziggy-js';
+
+interface GroupName {
+    groupName: string
+}
 
 const getPlayersNavItems = (groupUuid: string) => [
     {
@@ -85,16 +85,14 @@ const footerNavItems: NavItem[] = [
     },
 ];
 
-interface PageProps {
-    groupUuid: string;
-}
-
 export function AppSidebar() {
     const groupUuid = route().params.group as string;
 
     const playersNavItems = getPlayersNavItems(groupUuid);
     const coachesNavItems = getCoachesNavItems(groupUuid);
     const draftsNavItems = getDraftsNavItems(groupUuid);
+
+    const {groupName} = (usePage().props as unknown) as GroupName;
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -112,7 +110,9 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Group #1</SidebarGroupLabel>
+                    <SidebarGroupLabel>
+                        {groupName}
+                    </SidebarGroupLabel>
                     <SidebarMenu>
                         <SidebarMenuItem>
                             <Collapsible className="group/collapsible">

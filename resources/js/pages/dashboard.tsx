@@ -1,5 +1,4 @@
 import { Head, usePage } from '@inertiajs/react';
-import { dashboard } from '@/routes';
 import { Settings } from 'lucide-react';
 import { route } from 'ziggy-js';
 import { GroupProps } from '@/types';
@@ -65,7 +64,7 @@ export default function Dashboard({groupUuid}: GroupProps) {
                                 <li className='w-full'>
                                     <div className='px-4 py-3 rounded-md border border-gray-200 space-x-1.5 w-full flex items-center justify-between'>
                                         <span className='font-semibold'>Draft {draft.draft_id} <span className="uppercase text-green-500">{draft.draft_status}</span></span>
-                                        <a href={route('draftsShow', draft.draft_id)} className='bg-black text-white px-4 py-2 rounded-md text-sm'>View Results</a>
+                                        <a href={route('draftsShow', {draft: draft.draft_id, group: groupUuid})} className='bg-black text-white px-4 py-2 rounded-md text-sm'>View Results</a>
                                     </div>
                                 </li>
                             </ul>

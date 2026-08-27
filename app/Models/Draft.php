@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Draft extends Model
 {
-    protected $fillable = ['draft_id', 'draft_start', 'draft_status', 'draft_order', 'auto_pick',];
+    protected $fillable = ['draft_id', 'draft_start', 'draft_status', 'draft_order', 'auto_pick', 'group_uuid'];
 
     public function draftOrder()
     {

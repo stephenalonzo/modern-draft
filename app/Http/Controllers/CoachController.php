@@ -10,10 +10,10 @@ use Inertia\Inertia;
 
 class CoachController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         return Inertia::render('coaches/index', [
-            'coaches' => Coach::all()
+            'coaches' => Coach::where('group_uuid', $request->route('group'))->get()
         ]);
     }
 
@@ -32,6 +32,7 @@ class CoachController extends Controller
     public function store(CoachRequests $request)
     {
         $validated = $request->validated();
+        $validated['group_uuid'] = $request->route('group');
 
         $checkGroup = Group::where('group_uuid', $request->route('group'))->first();
 

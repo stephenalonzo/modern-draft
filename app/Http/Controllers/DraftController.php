@@ -11,16 +11,16 @@ use App\Models\DraftOrder;
 use App\Models\DraftPick;
 use App\Models\Group;
 use App\Models\Player;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class DraftController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // dd(Draft::where('draft_status', 'pending')->orWhere('')->get());
         return Inertia::render('drafts/index', [
-            'drafts' => Draft::where('draft_status', 'pending')->orWhere('draft_status', 'active')->get(),
-            'completedDrafts' => Draft::where('draft_status', 'completed')->get()
+            'drafts' => Draft::where('group_uuid', $request->route('group'))->where('draft_status', 'pending')->orWhere('draft_status', 'active')->get(),
+            'completedDrafts' => Draft::where('group_uuid', $request->route('group'))->where('draft_status', 'completed')->get()
         ]);
     }
 
@@ -49,11 +49,11 @@ class DraftController extends Controller
         ]);
     }
 
-    public function draftOrder()
+    public function draftOrder(Request $request)
     {
         return Inertia::render('drafts/order', [
-            'coaches' => Coach::all(),
-            'drafts' => Draft::all()
+            'coaches' => Coach::where('group_uuid', $request->route('group'))->get(),
+            'drafts' => Draft::where('group_uuid', $request->route('group'))->get()
         ]);
     }
 
@@ -62,6 +62,7 @@ class DraftController extends Controller
         $validated = $request->validated();
 
         $validated['draft_id'] = rand(1000, 9999);
+        $validated['group_uuid'] = $request->route('group');
 
         $checkGroup = Group::where('group_uuid', $request->route('group'))->first();
 
@@ -121,7 +122,7 @@ class DraftController extends Controller
         $completedUpdate = $updateDraftOrder->update(['on_the_board' => 'completed']);
 
         $getCoachName = explode(' ', $getCoach->coach);
-        $getPlayer = Player::select('id', 'first_name', 'last_name')->where('first_name', $validated['player_first_name'])->where('last_name', $validated['player_last_name'])->first();
+        $getPlayer = Player::select('id', 'first_name', 'last_name')->where('group_uuid', $request->route('group'))->where('first_name', $validated['player_first_name'])->where('last_name', $validated['player_last_name'])->first();
 
         if ($completedUpdate) {
             $checkGroup = Group::where('group_uuid', $request->route('group'))->first();
@@ -132,7 +133,7 @@ class DraftController extends Controller
 
             $draftPick = DraftPick::create($validated);
 
-            $coach = Coach::where('first_name', $getCoachName[0])->where('last_name', $getCoachName[1])->first();
+            $coach = Coach::where('group_uuid', $request->route('group'))->where('first_name', $getCoachName[0])->where('last_name', $getCoachName[1])->first();
 
             $coach->players()->attach($getPlayer->id);
 

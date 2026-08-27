@@ -1,5 +1,4 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
 import { route } from 'ziggy-js';
 import { GroupProps } from '@/types';
 

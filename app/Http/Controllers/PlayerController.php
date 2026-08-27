@@ -7,15 +7,14 @@ use App\Models\Coach;
 use App\Models\Group;
 use App\Models\Player;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class PlayerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         return Inertia::render('players/index', [
-            'players' => Player::all()
+            'players' => Player::where('group_uuid', $request->route('group'))->get()
         ]);
     }
 
@@ -27,6 +26,7 @@ class PlayerController extends Controller
     public function store(PlayerRequest $request)
     {
         $validated = $request->validated();
+        $validated['group_uuid'] = $request->route('group');
 
         $checkGroup = Group::where('group_uuid', $request->route('group'))->first();
 

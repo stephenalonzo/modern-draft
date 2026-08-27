@@ -24,7 +24,8 @@ class CoachRequests extends FormRequest
     {
         return [
             'first_name' => 'required',
-            'last_name' => 'required'
+            'last_name' => 'required',
+            'group_uuid' => 'required'
         ];
     }
 }

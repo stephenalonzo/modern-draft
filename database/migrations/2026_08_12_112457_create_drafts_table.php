@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('draft_status')->default('pending');
             $table->string('draft_order')->nullable();
             $table->string('auto_pick')->nullable();
+            $table->longText('group_uuid');
             $table->timestamps();
         });
     }
