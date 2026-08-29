@@ -24,7 +24,7 @@ class DraftController extends Controller
         ]);
     }
 
-    public function show(Draft $draft)
+    public function show(Request $request, Draft $draft)
     {
         $getCoach = DraftOrder::select('coach')->where('draft_id', $draft->draft_id)->where('on_the_board', 'active')->first();
 
@@ -34,7 +34,7 @@ class DraftController extends Controller
 
         return Inertia::render('drafts/show', [
             'draft' => $draft,
-            'players' => Player::with('coaches')->get(),
+            'players' => Player::with('coaches')->where('group_uuid', $request->route('group'))->get(),
             'coaches' => Coach::all(),
             'coach' => $getCoach->coach ?? '',
             'recentPickCoach' => $getRecentPickCoach->coach ?? '',
@@ -112,40 +112,62 @@ class DraftController extends Controller
 
     public function draftPick(DraftPickRequest $request, Draft $draft)
     {
-        $validated = $request->validated();
-
-        $validated['draft_id'] = $draft->draft_id;
+        // Get the draft order
         $getCoach = DraftOrder::select('coach')->where('draft_id', $draft->draft_id)->where('on_the_board', 'active')->first();
+
+        $validated = $request->validated();
+        $validated['draft_id'] = $draft->draft_id;
         $validated['coach'] = $getCoach->coach;
 
+        // Update the draft order status from "active" to "completed" when the coach makes a pick
         $updateDraftOrder = DraftOrder::where('draft_id', $draft->draft_id)->where('on_the_board', 'active')->first();
         $completedUpdate = $updateDraftOrder->update(['on_the_board' => 'completed']);
 
         $getCoachName = explode(' ', $getCoach->coach);
         $getPlayer = Player::select('id', 'first_name', 'last_name')->where('group_uuid', $request->route('group'))->where('first_name', $validated['player_first_name'])->where('last_name', $validated['player_last_name'])->first();
 
+        // Process after draft status is updated to "completed"
         if ($completedUpdate) {
+            // Ensure that the draft is within the active group
             $checkGroup = Group::where('group_uuid', $request->route('group'))->first();
 
             if (is_null($checkGroup)) {
                 return redirect()->to(route('select-group'));
             }
 
-            $draftPick = DraftPick::create($validated);
-
             $coach = Coach::where('group_uuid', $request->route('group'))->where('first_name', $getCoachName[0])->where('last_name', $getCoachName[1])->first();
-
             $coach->players()->attach($getPlayer->id);
 
-            if ($draftPick) {
-                $nextActivePick = DraftOrder::where('draft_id', $draft->draft_id)->where('on_the_board', 'pending')->first();
+            DraftPick::create($validated);
 
-                if (!is_null($nextActivePick)) {
-                    $nextActivePick->update(['on_the_board' => 'active']);
+            // Need to add logic that if there are still players on the board, coaches can still make a pick in the order of how the draft order was first created
+            $hasAvailablePlayers = Player::where('group_uuid', $request->route('group'))
+                ->doesntHave('coaches')
+                ->exists();
+
+            if ($hasAvailablePlayers) {
+                // Check for the next pending pick in the sequence
+                $nextPick = DraftOrder::where('draft_id', $draft->draft_id)
+                    ->where('on_the_board', 'pending')
+                    ->first();
+
+                if ($nextPick) {
+                    // Advance to the next queued pick
+                    $nextPick->update(['on_the_board' => 'active']);
+                } else {
+                    // All rounds played, but players remain: reset the earliest completed pick to active
+                    $firstCompleted = DraftOrder::where('draft_id', $draft->draft_id)
+                        ->where('on_the_board', 'completed')
+                        ->orderBy('id', 'asc') // Sorts by original creation order
+                        ->first();
+
+                    if ($firstCompleted) {
+                        $firstCompleted->update(['on_the_board' => 'active']);
+                    }
                 }
-
-                return back();
             }
+
+            return back();
         }
     }
 }

@@ -26,7 +26,6 @@ class PlayerRequest extends FormRequest
             'first_name' => 'required',
             'last_name' => 'required',
             'comments' => 'nullable',
-            'group_uuid' => 'required'
         ];
     }
 }
