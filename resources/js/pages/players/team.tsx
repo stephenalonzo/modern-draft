@@ -1,5 +1,4 @@
 import { Head, usePage} from '@inertiajs/react';
-import { teamsIndex } from '@/routes';
 
 interface Players {
     id: number,

@@ -1,7 +1,4 @@
 import { Head, usePage } from '@inertiajs/react';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import { coachesCreate, dashboard } from '@/routes';
-import { Clock, Settings } from 'lucide-react';
 import { useForm } from "@inertiajs/react";
 import { route } from 'ziggy-js';
 import { GroupProps } from '@/types';

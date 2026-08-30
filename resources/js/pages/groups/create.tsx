@@ -1,5 +1,4 @@
 import { Head, useForm } from "@inertiajs/react";
-import { Auth } from "@/types";
 import { route } from "ziggy-js";
 
 export default function createGroup() {

@@ -1,5 +1,4 @@
 import { Head, usePage, Link, useForm } from '@inertiajs/react';
-import { coachesIndex, dashboard, playersIndex } from '@/routes';
 import { Pencil, Trash2 } from 'lucide-react';
 import { route } from 'ziggy-js';
 import { Button } from '@/components/ui/button';

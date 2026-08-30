@@ -9,7 +9,7 @@ use App\Http\Controllers\SplashController;
 use App\Http\Controllers\TradeController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::inertia('/', 'auth/login')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Group HTTP Methods

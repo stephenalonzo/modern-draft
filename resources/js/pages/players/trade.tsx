@@ -1,5 +1,4 @@
 import { Head, useForm, usePage, router } from '@inertiajs/react';
-import { playersIndex, teamsIndex, tradesIndex } from '@/routes';
 import { TradeProps } from '@/types/trade';
 import { route } from 'ziggy-js';
 import { GroupProps } from '@/types';

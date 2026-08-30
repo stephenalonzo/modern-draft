@@ -29,7 +29,7 @@ import {
     CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { dashboard } from '@/routes';
-import type { GroupProps, NavItem } from '@/types';
+import type { NavItem } from '@/types';
 import { route } from 'ziggy-js';
 
 interface GroupName {
